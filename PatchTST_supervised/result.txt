@@ -1,0 +1,3 @@
+336_96_PatchTST_ETTh1_ftM_sl336_ll48_pl96_dm16_nh4_el3_dl1_df128_fc1_ebtimeF_dtTrue_Exp_0  
+mse:0.37514662742614746, mae:0.39947786927223206, rse:0.5807857513427734
+

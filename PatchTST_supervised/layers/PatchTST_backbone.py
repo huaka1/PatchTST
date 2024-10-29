@@ -29,8 +29,8 @@ class PatchTST_backbone(nn.Module):
         if self.revin: self.revin_layer = RevIN(c_in, affine=affine, subtract_last=subtract_last)
         
         # Patching
-        self.patch_len = patch_len
-        self.stride = stride
+        self.patch_len = patch_len #16
+        self.stride = stride #8
         self.padding_patch = padding_patch
         patch_num = int((context_window - patch_len)/stride + 1)
         if padding_patch == 'end': # can be modified to general case
@@ -62,15 +62,19 @@ class PatchTST_backbone(nn.Module):
         if self.revin: 
             z = z.permute(0,2,1)
             z = self.revin_layer(z, 'norm')
-            z = z.permute(0,2,1)
+            z = z.permute(0,2,1) #(128, 7, 336)
             
         # do patching
         if self.padding_patch == 'end':
-            z = self.padding_patch_layer(z)
+            z = self.padding_patch_layer(z) #(128, 7, 344)
+        # 展开 
+        # （128, 7, 42, 16）
         z = z.unfold(dimension=-1, size=self.patch_len, step=self.stride)                   # z: [bs x nvars x patch_num x patch_len]
+        # （128, 7, 16, 42）
         z = z.permute(0,1,3,2)                                                              # z: [bs x nvars x patch_len x patch_num]
         
         # model
+        # 进入encoder
         z = self.backbone(z)                                                                # z: [bs x nvars x d_model x patch_num]
         z = self.head(z)                                                                    # z: [bs x nvars x target_window] 
         
@@ -135,12 +139,12 @@ class TSTiEncoder(nn.Module):  #i means channel-independent
         
         super().__init__()
         
-        self.patch_num = patch_num
-        self.patch_len = patch_len
+        self.patch_num = patch_num #42
+        self.patch_len = patch_len #16
         
         # Input encoding
         q_len = patch_num
-        self.W_P = nn.Linear(patch_len, d_model)        # Eq 1: projection of feature vectors onto a d-dim vector space
+        self.W_P = nn.Linear(patch_len, d_model) # Eq 1: projection of feature vectors onto a d-dim vector space
         self.seq_len = q_len
 
         # Positional encoding
@@ -154,15 +158,14 @@ class TSTiEncoder(nn.Module):  #i means channel-independent
                                    pre_norm=pre_norm, activation=act, res_attention=res_attention, n_layers=n_layers, store_attn=store_attn)
 
         
-    def forward(self, x) -> Tensor:                                              # x: [bs x nvars x patch_len x patch_num]
-        
-        n_vars = x.shape[1]
+    def forward(self, x) -> Tensor:                                              
+        n_vars = x.shape[1] #(128, 7, 16, 42) x: [bs x nvars x patch_len x patch_num]
         # Input encoding
-        x = x.permute(0,1,3,2)                                                   # x: [bs x nvars x patch_num x patch_len]
-        x = self.W_P(x)                                                          # x: [bs x nvars x patch_num x d_model]
+        x = x.permute(0,1,3,2)  # (128, 7, 42, 16) x: [bs x nvars x patch_num x patch_len]
+        x = self.W_P(x)   # (128, 7, 42, 16) x: [bs x nvars x patch_num x d_model] 
 
-        u = torch.reshape(x, (x.shape[0]*x.shape[1],x.shape[2],x.shape[3]))      # u: [bs * nvars x patch_num x d_model]
-        u = self.dropout(u + self.W_pos)                                         # u: [bs * nvars x patch_num x d_model]
+        u = torch.reshape(x, (x.shape[0]*x.shape[1],x.shape[2],x.shape[3]))      # (896, 42, 16) u: [bs * nvars x patch_num x d_model]
+        u = self.dropout(u + self.W_pos)                                         # (896, 42, 16) u: [bs * nvars x patch_num x d_model]
 
         # Encoder
         z = self.encoder(u)                                                      # z: [bs * nvars x patch_num x d_model]

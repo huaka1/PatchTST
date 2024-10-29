@@ -1,51 +1,22 @@
-# PatchTST (ICLR 2023)
+# PatchTST
 
-### This is an offical implementation of PatchTST: [A Time Series is Worth 64 Words: Long-term Forecasting with Transformers](https://arxiv.org/abs/2211.14730). 
+PatchTST: "A Time Series is Worth 64 Words: Long-term Forecasting with Transformers." (official repo: https://github.com/yuqinie98/PatchTST)
 
-:triangular_flag_on_post: Our model has been included in [GluonTS](https://github.com/awslabs/gluonts). Special thanks to the contributor @[kashif](https://github.com/kashif)!
+**Updates**: 
 
-:triangular_flag_on_post: Our model has been included in [NeuralForecast](https://github.com/Nixtla/neuralforecast). Special thanks to the contributor @[kdgutier](https://github.com/kdgutier) and @[cchallu](https://github.com/cchallu)!
+2023-01: Our paper was accepted to ICLR 2023! The new official repo is: https://github.com/yuqinie98/PatchTST.
 
-:triangular_flag_on_post: Our model has been included in [timeseriesAI(tsai)](https://github.com/timeseriesAI/tsai/blob/main/tutorial_nbs/15_PatchTST_a_new_transformer_for_LTSF.ipynb). Special thanks to the contributor @[oguiza](https://github.com/oguiza)!
+Nov 29th: update few instructions and include other baseline models in supervised learning for comparison.
 
-We offer a video that provides a concise overview of our paper for individuals seeking a rapid comprehension of its contents: https://www.youtube.com/watch?v=Z3-NrohddJw
-
-
+Nov 16th: initial repo created.
 
 ## Key Designs
 
-:star2: **Patching**: segmentation of time series into subseries-level patches which are served as input tokens to Transformer.
+1. **Patching**: segmentation of time series into subseries-level patches which are served as input tokens to Transformer.
 
-:star2: **Channel-independence**: each channel contains a single univariate time series that shares the same embedding and Transformer weights across all the series.
+2. **Channel-independence**: each channel contains a single univariate time series that shares the same embedding and Transformer weights across all the series.
 
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/model.png)
-
-## Results
-
-### Supervised Learning
-
-Compared with the best results that Transformer-based models can offer, PatchTST/64 achieves an overall **21.0%** reduction on MSE and **16.7%** reduction
-on MAE, while PatchTST/42 attains a overall **20.2%** reduction on MSE and **16.4%** reduction on MAE. It also outperforms other non-Transformer-based models like DLinear.
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table3.png)
-
-### Self-supervised Learning
-
-We do comparison with other supervised and self-supervised models, and self-supervised PatchTST is able to outperform all the baselines. 
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table4.png)
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table6.png)
-
-We also test the capability of transfering the pre-trained model to downstream tasks.
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/table5.png)
-
-## Efficiency on Long Look-back Windows
-
-Our PatchTST consistently <ins>reduces the MSE scores as the look-back window increases</ins>, which confirms our model’s capability to learn from longer receptive field.
-
-![alt text](https://github.com/yuqinie98/PatchTST/blob/main/pic/varying_L.png)
+![alt text](https://github.com/PatchTST/PatchTST/blob/main/pic/model.png)
 
 ## Getting Started
 
@@ -96,24 +67,4 @@ https://github.com/alipay/Pyraformer
 https://github.com/ts-kim/RevIN
 
 https://github.com/timeseriesAI/tsai
-
-## Contact
-
-If you have any questions or concerns, please contact us: ynie@princeton.edu or nnguyen@us.ibm.com or submit an issue
-
-## Citation
-
-If you find this repo useful in your research, please consider citing our paper as follows:
-
-```
-@inproceedings{Yuqietal-2023-PatchTST,
-  title     = {A Time Series is Worth 64 Words: Long-term Forecasting with Transformers},
-  author    = {Nie, Yuqi and
-               H. Nguyen, Nam and
-               Sinthong, Phanwadee and 
-               Kalagnanam, Jayant},
-  booktitle = {International Conference on Learning Representations},
-  year      = {2023}
-}
-```
 
