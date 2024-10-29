@@ -57,7 +57,7 @@ class PatchTST_backbone(nn.Module):
             self.head = Flatten_Head(self.individual, self.n_vars, self.head_nf, target_window, head_dropout=head_dropout)
         
     
-    def forward(self, z):                                                                   # z: [bs x nvars x seq_len]
+    def forward(self, z):  #(128, 7, 336) z: [bs x nvars x seq_len]
         # norm
         if self.revin: 
             z = z.permute(0,2,1)
@@ -144,7 +144,7 @@ class TSTiEncoder(nn.Module):  #i means channel-independent
         
         # Input encoding
         q_len = patch_num
-        self.W_P = nn.Linear(patch_len, d_model) # Eq 1: projection of feature vectors onto a d-dim vector space
+        self.W_P = nn.Linear(patch_len, d_model) #16 -> 16的线性层 Eq 1: projection of feature vectors onto a d-dim vector space
         self.seq_len = q_len
 
         # Positional encoding
@@ -191,7 +191,7 @@ class TSTEncoder(nn.Module):
 
     def forward(self, src:Tensor, key_padding_mask:Optional[Tensor]=None, attn_mask:Optional[Tensor]=None):
         output = src
-        scores = None
+        scores = None #如果使用encode
         if self.res_attention:
             for mod in self.layers: output, scores = mod(output, prev=scores, key_padding_mask=key_padding_mask, attn_mask=attn_mask)
             return output
@@ -242,7 +242,7 @@ class TSTEncoderLayer(nn.Module):
         # Multi-Head attention sublayer
         if self.pre_norm:
             src = self.norm_attn(src)
-        ## Multi-Head attention
+        # Multi-Head attention src(896, 42, 16)
         if self.res_attention:
             src2, attn, scores = self.self_attn(src, src, src, prev, key_padding_mask=key_padding_mask, attn_mask=attn_mask)
         else:

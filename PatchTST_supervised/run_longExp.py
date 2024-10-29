@@ -6,7 +6,7 @@ import random
 import numpy as np
 import pydevd_pycharm
 
-pydevd_pycharm.settrace('localhost', port=36033, stdoutToServer=True, stderrToServer=True, suspend=False)
+pydevd_pycharm.settrace('localhost', port=37361, stdoutToServer=True, stderrToServer=True, suspend=False)
 
 
 parser = argparse.ArgumentParser(description='Autoformer & Transformer family for Time Series Forecasting')
